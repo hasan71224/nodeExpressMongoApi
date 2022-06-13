@@ -12,13 +12,51 @@ studentExpressRoute.route('/').get((req,res) =>{
         }
     })
 })
-
+// get data
 studentExpressRoute.route('/student/:id').get((req, res)=>{
     StudentSchema.findById(req.params.id,(error, data)=>{
         if(error){
             return next(error)
         }else{
             res.json(data)
+        }
+    })
+})
+
+//post data
+studentExpressRoute.route('/add-student').post((req, res, next)=>{
+    StudentSchema.create(req.body,(error, data)=>{
+        if(error){
+            return next(error)
+        }else{
+            res.json(data)
+        }
+    })
+})
+
+//delete data
+studentExpressRoute.route('/del-student/:id').delete((req, res)=>{
+    StudentSchema.findByIdAndRemove(req.params.id,(error, data)=>{
+        if(error){
+            return next(error)
+        }else{
+            res.status(200).json({
+                msg: data
+            })
+        }
+    })
+})
+
+//update data
+studentExpressRoute.route('/update-student/:id').put((req, res)=>{
+    StudentSchema.findByIdAndUpdate(req.params.id,{
+        $set: req.body
+    },(error, data)=>{
+        if(error){
+            return next(error)
+        }else{
+           res.json(data);
+           console.log("Update item successfull");
         }
     })
 })
