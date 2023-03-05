@@ -1,49 +1,49 @@
-let express = require('express');
-const createError = require('http-errors')
-path = require('path');
-mongoose = require('mongoose');
-cors = require('cors');
-bodyParser = require('body-parser');
-dbConfig = require('./db/database');
-
-mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig.db,{
-    useNewUrlParser: true
-}).then(()=>{
-    console.log('Database Connected');
-},
-error =>{
-    console.log('Database cloude not br connected:' + error);
-}
-)
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(express.json());
+app.use(fileUpload());
+app.use(cors())
 
-app.use(cors());
+const path = require('path')
+const dirPath = path.join(__dirname, 'uploads');
 
-const userRoute = require('./routes/student.routes')
 
-app.use('/endpoint', userRoute)
-
-const port= process.env.PORT || 8080;
-
-const server = app.listen(port, ()=> {
-    console.log('port connected to:' + port);
+app.get('/file-get', (req, res)=>{
+    fs.readdir(dirPath, (err, uploads)=>{
+        uploads.forEach((uploads)=>{
+            
+        })
+        return res.status(200).json({
+            success: true,
+            message: "upload file successfully created",
+            data: uploads,
+          });
+    })
+    
 })
 
-app.use((req, res, next) => {
-    next (createError(404));
-});
+    // fs.readdir(dirPath, (err, uploads)=>{
+    //     uploads.forEach((uploads)=>{
+    //         console.log(uploads);
+    //     })
+    // })
 
-app.get('/', (req, res) => {
-    res.send('invaild endpoint');
-});
 
-app.use(function (err, req, res, next){
-    if(!err.statusCode) err.statusCode = 500;
-    res.status(err.statusCode).send(err.message);
+app.listen(3200, ()=>console.log("server strated"));
+
+app.post("/file-upload", (req, res)=>{
+    console.log(Object.keys(req.files));
+    Object.keys(req.files).map(key =>
+        fs.writeFile(`./uploads/${req.files[key].name}`, req.files[key].data, ()=>{
+            console.log(`${req.files[key].name} written Successfully`);
+            
+        })
+        
+    ) 
+    return  res.redirect('http://127.0.0.1:5500/problem-one/index.html?files=');
 })
+

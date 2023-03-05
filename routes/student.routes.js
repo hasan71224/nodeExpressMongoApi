@@ -11,7 +11,7 @@ studentExpressRoute.route('/').get((req,res) =>{
             res.json(data)
         }
     })
-})
+}) 
 // get data
 studentExpressRoute.route('/student/:id').get((req, res)=>{
     StudentSchema.findById(req.params.id,(error, data)=>{
@@ -60,5 +60,7 @@ studentExpressRoute.route('/update-student/:id').put((req, res)=>{
         }
     })
 })
+
+
 
 module.exports = studentExpressRoute;
